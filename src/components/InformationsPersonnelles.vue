@@ -1,6 +1,6 @@
 <template>
     <div class="card" v-if="step==1">
-        <h3 class="card-header text-center">Informations personnelles</h3>
+        <h3 class="card-header text-center">Données personnelles</h3>
         <div class="card-body">
             <form @submit.prevent="handleSubmit">
                 <div class="form-row">
@@ -45,7 +45,7 @@
                         Mobile:
                     </label>
                     <div class="form-group col-lg-12">
-                        <input type="text" class="form-control" placeholder="Commencez par 0"
+                        <input type="text" class="form-control" placeholder="0xxxxxxxxxx"
                         v-model.trim="$v.mobile.$model" :class="{
                             'is-invalid':$v.mobile.$error, 'is-valid': !$v.mobile.$invalid }" required>
                         <div class="invalid-feedback">
@@ -56,38 +56,48 @@
                             <span v-if="!$v.mobile.beginWithZero" class="error-message">Commencez par 0!</span>
                         </div>
                     </div>
+
                     <label class="label">
-                        Nom du mode:
+                        Titre du diplôme:
                     </label>
                     <div class="form-group col-lg-12">
-                        <select class="form-control" @change="getOptions($event)" aria-label="Selectionnez SVP" 
-                            v-model.trim="$v.mode_id.$model" :class="{
-                            'is-invalid':$v.mode_id.$error, 'is-valid': !$v.mode_id.$invalid }" required>
-                            <option v-for="option in mode_options" :key="option.value" :value="option.value">{{option.name}}</option>
-                        </select>
+                        <input type="text" class="form-control"
+                        v-model.trim="$v.diplomat_title.$model" :class="{
+                            'is-invalid':$v.diplomat_title.$error, 'is-valid': !$v.diplomat_title.$invalid }" required>
                         <div class="invalid-feedback">
-                            <span v-if="!$v.mode_id.required" class="error-message">Ce champ est obligatoire!</span>
+                            <span v-if="!$v.diplomat_title.required" class="error-message">Ce champ est obligatoire!</span>
                         </div>
                     </div>
                     <label class="label">
-                        Forme d'exercice:
+                        Université:
                     </label>
                     <div class="form-group col-lg-12">
-                        <select class="form-control" aria-label="Selectionnez SVP" 
-                            v-model.trim="$v.forme_id.$model" :class="{
-                                'is-invalid':$v.forme_id.$error, 'is-valid': !$v.forme_id.$invalid }" required>
-                            <option v-for="option in this.currentOptions" :key="option.value" :value="option.value">{{option.name}}</option>
-                        </select>
+                        <input type="text" class="form-control"
+                        v-model.trim="$v.university.$model" :class="{
+                            'is-invalid':$v.university.$error, 'is-valid': !$v.university.$invalid }" required>
                         <div class="invalid-feedback">
-                            <span v-if="!$v.forme_id.required" class="error-message">Ce champ est obligatoire!</span>
+                            <span v-if="!$v.university.required" class="error-message">Ce champ est obligatoire!</span><br/>
                         </div>
                     </div>
                     <label class="label">
+                        Date du diplôme:
+                    </label>
+                    <div class="form-group col-lg-12">
+                        <input type="date" class="form-control"
+                        v-model.trim="$v.date_diplomat.$model" :class="{
+                            'is-invalid':$v.date_diplomat.$error, 'is-valid': !$v.date_diplomat.$invalid }" required>
+                        <div class="invalid-feedback">
+                            <span v-if="!$v.date_diplomat.required" class="error-message">Ce champ est obligatoire!</span><br/>
+                            <span v-if="!$v.date_diplomat.existingDate" class="error-message">Veuillez entrer une date valide!</span><br/>
+                        </div>
+                    </div>
+
+                    <!-- <label class="label">
                         Copie du CIN:
                     </label>
                     <div class="form-group col-lg-12">
                         <vue-dropzone ref="cin_doc" id="cin_doc" :options="dropzoneOptions" required></vue-dropzone>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="emptyspace"></div>
                 <div class="buttons">
@@ -102,15 +112,16 @@
 
 <script>
 import {required, minLength, maxLength, numeric} from 'vuelidate/lib/validators'
-import vue2Dropzone from 'vue2-dropzone'
+//import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 const beginWithZero = (mobile) => (mobile.charAt(0) === '0');
 const isMature = (date) => (Math.floor((new Date() - new Date(date).getTime()) / 3.15576e+10) > 18)
+const existingDate = (date) => (Math.floor((new Date() - new Date(date).getTime()) / 3.15576e+10) >= 0)
 export default {
   name: 'InformationsPersonnelles',
-  components: {
+  /* components: {
     vueDropzone: vue2Dropzone
-  },
+  }, */
   props: {
     myName: String,
     step: Number,
@@ -123,11 +134,9 @@ export default {
       gender: "",
       birthday: "",
       mobile: "",
-      mode_id: "",
-      forme_id: "",
-      cin_doc: "",
-      mode_options: [{name: "Public", value: "1", form_options: [{name: "Fonctionnaire", value: "1"}, {name: "Agent", value: "2"}]}, {name: "Privé", value: "2", form_options: [{name: "Indépendant", value: "3"}, {name: "Associé", value: "4"}, {name: "Salarié", value: "5"}]}, {name: "Enseignant", value: "3", form_options: [{name: "Enseignant", value: "6"}]}],
-      currentOptions: [],
+      diplomat_title: "",
+      date_diplomat: "",
+      university: "",
       dropzoneOptions: {
         url: 'https://httpbin.org/post',
         thumbnailWidth: 150,
@@ -155,13 +164,13 @@ export default {
           beginWithZero,
           numeric
       },
-      mode_id: {
+      diplomat_title: {
           required
       },
-      forme_id: {
-          required
+      date_diplomat: {
+          required, existingDate
       },
-      cin_doc: {
+      university:{
           required
       }
   },
@@ -174,20 +183,13 @@ export default {
           gender: this.gender,
           birthday: this.birthday,
           mobile: this.mobile,
-          mode_id: this.mode_id,
-          forme_id: this.forme_id,
-          cin_doc: this.cin_doc
+          diplomat_title: this.diplomat_title,
+          date_diplomat: this.date_diplomat,
+          university: this.university,
       })
       //console.log(this.fullname+" "+this.gender+" "+this.birthday+" "+this.mobile+" "+ this.mode_id + " " +this.forme_id + " " + this.cin_doc + " " + this.employer + " " + this.society + " " + this.ice);
     },
-    getOptions(event) {
-        for(let i = 0; i < this.mode_options.length; i++) {
-            if (this.mode_options[i].value === event.target.value) {
-                this.currentOptions = this.mode_options[i].form_options;
-                break;
-            }
-        }
-    },
+    
     
   }
 }
@@ -218,5 +220,9 @@ export default {
 
     .emptyspace {
         height: 50px;
+    }
+
+    .invalid-feedback {
+        text-align: left;
     }
 </style>
