@@ -8,7 +8,7 @@
                         Nom du mode:
                     </label>
                     <div class="form-group col-lg-12">
-                        <select class="form-control" @change="getOptions($event)" aria-label="Selectionnez SVP" 
+                        <select class="form-control" @change="getOptions($event)" aria-label="Selectionnez SVP"
                             v-model.trim="$v.mode_id.$model" :class="{
                             'is-invalid':$v.mode_id.$error, 'is-valid': !$v.mode_id.$invalid }" required>
                             <option v-for="option in mode_options" :key="option.value" :value="option.value">{{option.name}}</option>
@@ -21,7 +21,7 @@
                         Forme d'exercice:
                     </label>
                     <div class="form-group col-lg-12" v-if="currentOptions.length > 0">
-                        <select class="form-control" aria-label="Selectionnez SVP" 
+                        <select class="form-control" aria-label="Selectionnez SVP"
                             v-model.trim="$v.forme_id.$model" :class="{
                                 'is-invalid':$v.forme_id.$error, 'is-valid': !$v.forme_id.$invalid }" required>
                             <option v-for="option in this.currentOptions" :key="option.value" :value="option.value">{{option.name}}</option>
@@ -74,7 +74,7 @@
                             <span v-if="!$v.autorisation_number.required" class="error-message">Ce champ est obligatoire!</span>
                         </div>
                     </div>
-                    
+
                     <label class="label" v-if="isPrivate()">
                         Date d'autorisation:
                     </label>
@@ -154,7 +154,6 @@ export default {
             ice: this.ice,
             mode_id: this.mode_id,
             forme_id: this.forme_id,
-            is_private: this.isPrivate()
         })
         //console.log(this.autorisation_number+" "+this.date_autorisation + " " + this.autorisation_doc + " " + this.regularity_doc + " " + this.regularity_doc);
     },
@@ -198,7 +197,7 @@ export default {
     .success-message {
         color:#06ff3c
     }
-    
+
     .buttons {
         display: flex;
         width: 100%;

@@ -6,13 +6,13 @@
                 <div class="form-row">
                     <label class="label" v-if="isMember()">
                         Copie du CIN:
-                    </label>    
+                    </label>
                     <div class="form-group col-lg-12" v-if="isMember()">
                         <vue-dropzone ref="cin_doc" id="cin_doc" :options="dropzoneOptions" required></vue-dropzone>
                     </div>
                     <label class="label" v-if="isMember()">
                         Copie du diplôme:
-                    </label>    
+                    </label>
                     <div class="form-group col-lg-12" v-if="isMember()">
                         <vue-dropzone ref="diplomat_doc" id="diplomat_doc" :options="dropzoneOptions" required></vue-dropzone>
                     </div>
@@ -30,22 +30,22 @@
                         <vue-dropzone ref="regularity_doc" id="regularity_doc" :options="dropzoneOptions"></vue-dropzone>
                     </div>
 
-                    <label class="label" v-if="isMember()">
+                    <label class="label" v-if="HasAttestation()">
                         Attestation de travail:
                     </label>
-                    <div class="form-group col-lg-12" v-if="isMember()">
+                    <div class="form-group col-lg-12" v-if="HasAttestation()">
                         <vue-dropzone ref="job_doc" id="job_doc" :options="dropzoneOptions"></vue-dropzone>
-                    </div> 
+                    </div>
 
                     <label class="label" v-if="hasModeleSeven()">
                         Modèle sept:
                     </label>
                     <div class="form-group col-lg-12" v-if="hasModeleSeven()">
                         <vue-dropzone ref="model_seven_doc" id="model_seven_doc" :options="dropzoneOptions"></vue-dropzone>
-                    </div> 
+                    </div>
                 </div>
                 <div class="emptyspace"></div>
-                
+
                 <div class="buttons">
                     <button class="btn btn-danger" @click="goBack">Précédent</button>
                     <span class="flex-spacer"></span>
@@ -65,13 +65,13 @@ export default {
   props: {
       agency_id: Number,
       step: Number,
-      isPrivate: Boolean,
-      isAssociate: Boolean
+      mode_id: String,
+      forme_id : String
   },
   components: {
     vueDropzone: vue2Dropzone
   },
-  
+
   data () {
     return {
       agency_ids: [11],
@@ -81,14 +81,14 @@ export default {
       regularity_doc: "",
       job_doc: "",
       dropzoneOptions: {
-          url: 'https://httpbin.org/post',
+          url: 'http://localhost:8000/users/media',
           thumbnailWidth: 150,
           maxFilesize: 0.5,
-          headers: { "My-Awesome-Header": "header value" }
+          headers: {  'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
       },
     }
   },
-  
+
 
   validations: {
     diplomat_doc: { required },
@@ -112,19 +112,16 @@ export default {
         this.$emit('step', 3);
       },
       isMember() {
-          console.log("agencyb id:", this.agency_id);
-          for (let id of this.agency_ids) {
-              if (id === this.agency_id) {
-                  return true;
-              }
-          }
-          return false;
+          return this.agency_ids.includes(this.agency_id)
       },
       hasAutorisation() {
-        return this.isMember()&&this.isPrivate;
+        return (this.isMember()&& (parseInt(this.mode_id) === 2)) ;
       },
       hasModeleSeven() {
-        return this.isMember()&&this.isAssociate
+        return (this.isMember()&& (parseInt(this.forme_id) === 4)) ;
+      },
+      HasAttestation(){
+        return (this.isMember()&& ![3,4].includes(parseInt(this.forme_id)));
       }
   }
 }
